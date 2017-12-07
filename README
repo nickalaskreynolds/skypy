@@ -1,0 +1,99 @@
+# SKYPY
+######################################################
+
+Python script that generates and stores object names and other parameters to query simbad and store into a database.
+
+Allows for an easy calling of the data set and read out into sub files
+
+Features:
+Set configuration of location/s
+Initial creation of file list
+Populates filelist parameters from simbad or manual editing allowed
+Add to file list
+automatically determines dates objects are viable
+Allows polling based on object type, seasonal/dates, or regions in the sky
+Allows for output into numerous formats including format for Jskycal
+Robust function allows for declaring of new file type formats and population of said formats
+
+
+
+OUTLINE
+
+allow for saving of certain configs
+----------------------------------------------------------------------------------------
+LOCATIONCONFIG
+> master config program that reads config,locationresolver to make a location database
+> make populate and refresh command for computing the season visibility of 
+  each of the sources in the database
+<<<<<<<
+CONFIG
+> configuration file manipulator
+> input location, with tz
+LOCATION RESOLVER
+> takes long lat in any standard format outputs to more uniform format, N E justified
+CURRENT DATE RESOLVER
+> takes current date in any standard format and outputs to more uniform format
+>>>>>>>
+----------------------------------------------------------------------------------------
+STAR DATABASE
+> stores star name linked to unique num, type, ra,dec,epoch,ubvrigjhk,size,lastupdate
+> create dict of unique num: list of star names for easy/quick sorting
+> create dict of type: list unique numbers for easy/quick type sorting
+----------------------------------------------------------------------------------------
+POLLING
+> allow prompt for lists(region of sky,type,season),single(name)
+----------------------------------------------------------------------------------------
+CREATION
+> will create files for input into database for APO tui
+> will create files for input into Jskycal
+----------------------------------------------------------------------------------------
+QUERY
+> web query for source in simbad, returns the needed items
+
+
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+QUICK SORTING CODE SINGLE COL
+import operator
+
+def sort_table(table, col=0):
+    return sorted(table, key=operator.itemgetter(col))
+
+if __name__ == '__main__':
+    mytable = (
+        ('Joe', 'Clark', '1989'),
+        ('Charlie', 'Babbitt', '1988'),
+        ('Frank', 'Abagnale', '2002'),
+        ('Bill', 'Clark', '2009'),
+        ('Alan', 'Clark', '1804'),
+        )
+    for row in sort_table(mytable, 1):
+        print row
+
+
+QUICK SORTING CODE MULTI COL
+import operator
+
+def sort_table(table, cols):
+    """ sort a table by multiple columns
+        table: a list of lists (or tuple of tuples) where each inner list 
+               represents a row
+        cols:  a list (or tuple) specifying the column numbers to sort by
+               e.g. (1,0) would sort by column 1, then by column 0
+    """
+    for col in reversed(cols):
+        table = sorted(table, key=operator.itemgetter(col))
+    return table
+
+if __name__ == '__main__':
+    mytable = (
+        ('Joe', 'Clark', '1989'),
+        ('Charlie', 'Babbitt', '1988'),
+        ('Frank', 'Abagnale', '2002'),
+        ('Bill', 'Clark', '2009'),
+        ('Alan', 'Clark', '1804'),
+        )
+    for row in sort_table(mytable, (1,0)):
+        print row
