@@ -10,6 +10,7 @@ Misc  : Will handle the databases using sqlite
 from os.path import isfile
 from time import time as ctime
 import sqlite3
+from collections import Iterable
 
 # import custom modules
 from .colours import colours
@@ -18,7 +19,6 @@ from ..version import *
 # checking python version
 assert assertion()
 __version__ = package_version()
-
 
 class sql(sqlobject):
 
@@ -76,11 +76,10 @@ class sql(sqlobject):
 
     def db_single(self,col1,value):
         '''
-        Search an open DB, single column value select
+        Search an open DB, single value select
         '''
         self.sb.cursor()
-        t = (value,)
-        self.db.execute('SELECT * FROM db WHERE symbol>=?', t)
+        self.db.execute('SELECT * FROM db WHERE %s like %s', (col1,value))
         return self.db.fetchall()
 
     def db_ssort(self,col1,top):
@@ -88,8 +87,7 @@ class sql(sqlobject):
         Search an open DB, single column sort, pulling top values
         '''
         self.sb.cursor()
-        t = (value,)
-        self.db.execute('SELECT * FROM db WHERE symbol>=?', t)
+        self.db.execute('SELECT * FROM db order by %s ASC, %s ASC limit %s', (col1,col2,top))
         return self.db.fetchall()
 
     def db_dsort(self,col1,col2,top):
@@ -97,6 +95,7 @@ class sql(sqlobject):
         Search an open DB, double column sort, pulling top values
         '''
         self.sb.cursor()
+        self.db.execute('SELECT * FROM db order by %s ASC, %s ASC limit %s', (col1,col2,top))
         return self.db.fetchall()
 
     def db_tsort(self,col1,col2,col3,top):
@@ -104,6 +103,7 @@ class sql(sqlobject):
         Search an open DB,triple column sort, pulling top values
         '''
         self.sb.cursor()
+        self.db.execute('SELECT * FROM db order by %s ASC, %s ASC, %s ASC limit %s', (col1,col2,col3,top))
         return self.db.fetchall()
 
     def closedb(self):
@@ -118,12 +118,25 @@ def verify_input_sql(db,values):
     star uses    : name1, name2, type, ra, dec, epoch, ubv, lastupdate
     location uses: name, lat, long, tz, T/F for DST, lastupdate
     '''
-    if db == 'star':
+    final = []
+    if typecheck(values) and type(values) != tuple:
+        final = [tuple(x) for x in values]
+    elif typecheck(values) and type(values) == tuple:
+        final = [values,]
+    else:
+        raise RuntimeError('Cannot verify input for sql')
 
+    if db == 'star':
+        if len(final[0]) != 10:
+            raise RuntimeError('Cannot verify input for sql')
     elif db == 'location'
+        if len(final[0]) != 6:
+            raise RuntimeError('Cannot verify input for sql')
+
+    return final
 
 def typecheck(obj): 
     '''
     Checks if object is iterable and not string
     '''
-    return not isinstance(obj, str) and isinstance(obj, Iterable)
+    return not isinstance(obj, str) and isinstance(obj, iterable)
