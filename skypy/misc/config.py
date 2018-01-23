@@ -9,17 +9,15 @@ Example : defaultconfig.py
 '''
 
 # imported standard modules
-from os.path import isfile,getctime
+from os.path import isfile
 from os import getcwd,remove
 from sys import exit
-from glob import glob
 from shutil import copyfile
 from inspect import getfile
 from importlib import import_module
 from time import time as ctime
 
 # import custom modules
-from . import config_template
 from .colours import colours
 from ..version import *
 
@@ -42,12 +40,9 @@ class configuration(object):
         else:
             self.cwd = cwd
 
-        self.params     = None
-        self.loadedfile = None
-        self.orig       = None
+        self.params = None
 
         if inputfile == None:
-            self.example()
             raise RuntimeError('Configuration file not specified, refer to example...')
         else:
             self.inputfile=self.remove_ext(self.find_file(inputfile))
@@ -64,22 +59,19 @@ class configuration(object):
         '''
         return vars(self)
 
-    def load(self):
-        """
-        load the input file
-        """
-        self.loadedfile = import_module(self.inputfile)
-        self.params     = self.read()
-        self.orig       = self.params
-        if self.remove:
-            remove('{}/{}.py'.format(self.cwd,self.inputfile))
-
     def read(self):
         """
         read the input file
         """
-        return self.loadedfile.config
-
+        temp = vars(import_module(self.inputfile))
+        mainlibs=['time','numpy','scipy','version','datetime','os']
+        b = {}
+        for i in temp:
+            if (i.split('.')[0] not in mainlibs) and ('__' not in i):
+                b[i] = temp[i]
+        self.params = b
+        if self.remove:
+            remove('{}/{}.py'.format(self.cwd,self.inputfile))
 
     def get_params(self):
         """
@@ -149,15 +141,6 @@ class configuration(object):
         else:
             raise RuntimeError('Input file not found: {}'.format(inputfile))
         return dest.split('/')[-1]
-
-    def example(self):
-        """
-        Make the example file in the cwd
-        """
-        src = "{}.py".format(self.remove_ext(getfile(config_template)))
-        dest = "{}/config_template.py".format(self.cwd)
-        if not isfile(dest):
-            copyfile(src,dest)
 
 if __name__ == "__main__":
     print('Testing module\n')

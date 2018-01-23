@@ -18,6 +18,11 @@ import time
 
 # import custom modules
 from .colours import colours
+from ..version import *
+
+# checking python version
+assert assertion()
+__version__ = package_version()
 
 # function that creates a logger
 class Messenger(object):
@@ -31,8 +36,8 @@ class Messenger(object):
     PY2 = version_info[0] == 2
     PY3 = version_info[0] == 3
 
-    use_structure = ".    "
-    def __init__(self, verbosity=2, use_colour=True, use_structure=False,add_timestamp=True, logfile=None):
+    def __init__(self, verbosity=2, universal_string=False,use_colour=True,\
+                 use_structure=False,structure=" | ",add_timestamp=True, logfile=None,override=True):
         """
         Setting the parameters for the Messenger class.
         """
@@ -45,13 +50,17 @@ class Messenger(object):
         else:
             self.disable_colour()
 
+        self.structure_string = structure
         self.use_structure = use_structure
         self.add_timestamp = add_timestamp
         self.logfile = logfile
+        self.override = override
+        self.un_string = universal_string
 
-        # overrides existing file
-        if logfile is not None:
-            self.f = open(logfile, 'w') 
+        # override existing file if specified
+        if self.override:
+            with open(self.logfile,'w') as f:
+                f.write('')
 
     def get_functions(self):
         '''
@@ -64,6 +73,12 @@ class Messenger(object):
         return all input variables initialized
         '''
         return vars(self)
+
+    def open(self):
+        self.f = open(self.logfile,'a')
+
+    def close(self):
+        self.f.close()
 
     def set_verbosity(self, verbosity):
         """
@@ -107,16 +122,16 @@ class Messenger(object):
         self.DEBUG   = colours.DEBUG
         self.CLEAR   = colours._RST_
 
-    def _get_structure_string(self, level):
+    def _get_structure_string(self):
         """
         Returns the string of the message with the specified level
-        Which is dependent on the verbosity
         """
 
         string = ''
         if self.use_structure:
-            for i in range(level):
-                string = string + self.structure_string
+            string = string + self.structure_string
+        if self.un_string:
+            string = self.un_string + self.structure_string 
         return string
 
     def _get_time_string(self):
@@ -134,7 +149,7 @@ class Messenger(object):
         Constructs the full string that carries the message
         with the specified verbosity parameters
         """
-        struct_string = self._get_structure_string(verb_level)
+        struct_string = self._get_structure_string()
         time_string = self._get_time_string()
         return time_string + struct_string + msg
 
@@ -143,10 +158,11 @@ class Messenger(object):
         Write the message to the file and print 
         it to the terminal if it is wanted
         """
+        self.open()
         if out:
             print("{}{}{}".format(cmod,msg,self.CLEAR))
-        if type(self.logfile) is str:
-            self.f.write(msg + '\n')
+        self.f.write(msg + '\n')
+        self.close()
 
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     """
@@ -199,7 +215,7 @@ class Messenger(object):
 
     def pyinput(self,message=None,verb_level=0):
 
-        total_Message = "{}: ".format(message)
+        total_Message = "Please input {}: ".format(message)
         if self.PY2:
             out = raw_input(total_Message)
         if self.PY3:
@@ -208,6 +224,10 @@ class Messenger(object):
             full_msg = self._make_full_msg(total_Message, verb_level)
             self._write(self.DEBUG, full_msg,False)      
         return out
+
+    def _break(self,out=False):
+
+        self.write(self.HEADER1,'{}'.format(''.join(['#' for x in range(25)])),out=out)
 
     def waiting(self,auto,seconds=1,verb_level=0):
         if not auto:
@@ -222,14 +242,15 @@ class Messenger(object):
         such that the files removed are displayed appropriately or not removed
         if the file is not found
         """
-        if not typecheck(file):
-            for f in glob('*'+file+'*'):
+        if type(file) is str:
+            for f in glob(file+'*'):
                 if isfile(f):
                     try:
                         remove(f)
                         self.debug("Removed file {}".format(f))
                     except OSError:
-                        self.debug("Cannot find {} to remove".format(f))
+                        self.debug("Cannot find {} to remove, trying as directory".format(f))
+                        os.system('rm -rf {}'.format(f))
         else:
             for f in file:
                 if isfile(f):
@@ -237,10 +258,10 @@ class Messenger(object):
                         remove(f)
                         self.debug("Removed file {}".format(f))
                     except OSError:
-                        self.debug("Cannot find {} to remove".format(f))   
+                        self.debug("Cannot find {} to remove".format(f))                   
 
-def typecheck(obj): return not isinstance(obj, str) and isinstance(obj, Iterable)
 
 if __name__ == "__main__":
     print('Testing module\n')
     print("{}".format(__doc__))
+    
