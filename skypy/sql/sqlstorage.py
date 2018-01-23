@@ -13,7 +13,7 @@ import sqlite3
 from collections import Iterable
 
 # import custom modules
-from .colours import colours
+from ..misc.colours import colours
 from ..version import *
 
 # checking python version
@@ -87,7 +87,7 @@ class sql(sqlobject):
         Search an open DB, single column sort, pulling top values
         '''
         self.sb.cursor()
-        self.db.execute('SELECT * FROM db order by %s ASC, %s ASC limit %s', (col1,col2,top))
+        self.db.execute('SELECT * FROM db order by %s ASC, limit %s', (col1,top))
         return self.db.fetchall()
 
     def db_dsort(self,col1,col2,top):
