@@ -63,6 +63,7 @@ class sql(sqlobject):
         star uses    : name1, name2, type, ra, dec, epoch, ubv, lastupdate
         location uses: name, lat, long, tz, T/F for DST, lastupdate
         '''
+        self.sb.cursor()
         value = verify_input_sql(db,value)
         if cmd == 'star':
             self.db.executemany('INSERT INTO db VALUES (?,?,?,?,?,?,?,?,?,?)',values)
@@ -73,23 +74,37 @@ class sql(sqlobject):
         else:
             return
 
-
-    def querydb_single(self,value):
+    def db_single(self,col1,value):
         '''
-        Search an open DB
+        Search an open DB, single column value select
         '''
+        self.sb.cursor()
         t = (value,)
-        self.db.execute('SELECT * FROM db WHERE symbol=?', t)
+        self.db.execute('SELECT * FROM db WHERE symbol>=?', t)
+        return self.db.fetchall()
 
-    def querydb_double(self,type,value):
+    def db_ssort(self,col1,top):
         '''
-        Search an open DB
+        Search an open DB, single column sort, pulling top values
         '''
+        self.sb.cursor()
+        t = (value,)
+        self.db.execute('SELECT * FROM db WHERE symbol>=?', t)
+        return self.db.fetchall()
 
-    def querydb_triple(self,type,value):
+    def db_dsort(self,col1,col2,top):
         '''
-        Search an open DB
+        Search an open DB, double column sort, pulling top values
         '''
+        self.sb.cursor()
+        return self.db.fetchall()
+
+    def db_tsort(self,col1,col2,col3,top):
+        '''
+        Search an open DB,triple column sort, pulling top values
+        '''
+        self.sb.cursor()
+        return self.db.fetchall()
 
     def closedb(self):
         '''
