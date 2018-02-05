@@ -20,7 +20,7 @@ from ..version import *
 assert assertion()
 __version__ = package_version()
 
-class sql(sqlobject):
+class sql(object):
 
     def __init__(self,dbdir=None,dbname=None):
         '''
@@ -129,7 +129,7 @@ def verify_input_sql(db,values):
     if db == 'star':
         if len(final[0]) != 10:
             raise RuntimeError('Cannot verify input for sql')
-    elif db == 'location'
+    elif db == 'location':
         if len(final[0]) != 6:
             raise RuntimeError('Cannot verify input for sql')
 

@@ -10,7 +10,6 @@ Misc  : Will handle the databases using sqlite
 from os.path import isfile
 
 # import nonstandard modules
-from astroquery.simbad import Simbad
 from astropy import coordinates
 import astropy.units as u
 
@@ -27,6 +26,7 @@ def simbadoquery(qon):
     '''
     will do a general object query of simbad
     '''
+    from astroquery.simbad import Simbad
     s = Simbad()
     s.add_votable_fields('id(1)','id(2)','ra(d)','dec(d)','ubv')
     r = s.query_object(qon)
@@ -37,6 +37,7 @@ def simbadrquery(qon):
     '''
     will do a general region query of simbad
     '''
+    from astroquery.simbad import Simbad
     s = Simbad()
     s.add_votable_fields('id(1)','id(2)','ra(d)','dec(d)','ubv')
     r = s.query_object(qon)
