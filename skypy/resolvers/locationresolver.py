@@ -76,8 +76,8 @@ def checkconv(coord):
             return float(coord)
         except:
             # handle string proper
+            count = 0
             while not typecheck(coord):
-                count = 0
                 coord = coord.split(delimiters[count])
                 if len(coord) == 1:
                     coord = coord[0]
