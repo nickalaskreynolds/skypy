@@ -1,104 +1,108 @@
 #!/usr/bin/env python
 '''
-Name  : Location Resolver,locationresolve.py
+Name  : Location Resolver,locationresolver.py
 Author: Nickalas Reynolds
 Date  : Fall 2017
 Misc  : Resolves the location supplied to a more standard format, yields 
         an object that holds the orig date, utc, and the season
 '''
 
-# UNTESTED
-
 # imported standard modules
+from collections import Iterable
 
 # import custom modules
 from ..version import *
-from collections import Iterable
 
 # checking python version
 assert assertion()
 __version__ = package_version()
 
-def typecheck(obj): return not isinstance(obj, str) and isinstance(obj, Iterable)
 
 class location(object):
+    '''
+    This location object will better justify the location format
+    '''
 
-    def __init__(self,lat,lon,tz=0):
+    def __init__(self,name,lat,lon,tz,dst):
         '''
-        input lat and long in +-DD.DDDN/S/E/W format 
-        must both be strings
-        37.124N,-97.124E
+        Initialize class
+        name string
+        lat long can be of any any standard format
+        N W justified
+        tz int
+        dst y/n
         '''
+        self.name   = name
         self.coords = self.justifycoords(lat,lon)
         self.tz     = self.timezone(tz)
+        assert dst.lower() in ['y','n']
+        self.dst    = dst.lower()
 
     def main(self):
-        return self.coords,self.tz,self.hemisphere(self.coords[0])
+        '''
+        main call
+        '''
+        return self.name,self.coords,self.tz,self.dst
 
     def timezone(self,local):
+        '''
+        force timezones to be -12...12
+        '''
         zones = [x for x in range(-12,13)]
         assert local in zones
         return local
 
-    def hemisphere(self,hemi):
-        if hemi > 0:
-            return 'n'
-        else:
-            return 's'
-
     def justifycoords(self,lat,lon):
         '''
-        Will N and E justify coords
-        They have to be strings
+        Need to be N and W justified
         '''
         
         lat = checkconv(lat)
         lon = checkconv(lon)
-
-        if lat[-1:].lower() == 'n':
-            lat = float(lat[:-1])
-        else:
-            lat = -1.* float(lat[:-1])
-
-        if lon[-1:].lower() == 'e':
-            lon = float(lon[:-1])
-        else:
-            lon = -1.* float(lon[:-1])
         return lat,lon
 
-    def cat(init,delim=' ',to=''):
-        if typecheck(init):
-            init = ' '.join(init)
-        return to.join(init.split(delim))
-
-    def checkconv(coord,direc='n'):
-        '''
-        will take a string coord of standard delimiters ' ' or ':'
-        convert to a list
-        return the decimal conversion and direction
-        '''
-        coord = cat(coord,' ',':')
-
-        if len(coord.split(':')) == 3:
+def checkconv(coord):
+    '''
+    will take a coord convert to a list
+    return the decimal conversion
+    '''
+    delimiters = [':',' ','  ',',']
+    # if a string, handle
+    if type(coord) == float:
+        return coord
+    if type(coord) == str:
+        # check if float hidden as string
+        try:
+            return float(coord)
+        except:
+            # handle string proper
+            while not typecheck(coord):
+                count = 0
+                coord = coord.split(delimiters[count])
+                if len(coord) == 1:
+                    coord = coord[0]
+                count += 1
+    # if list, make to float, final form
+    if typecheck(coord):
+        if len(coord) == 3:
+            temp0,temp1,temp2 = map(float,coord)
+            total = abs(temp0) + temp1/60. + temp2/3600
+        elif len(coord) == 2:
+            temp0,temp1 = map(float,coord)
+            temp2 = temp1/60. - temp1
+            total = abs(temp0) + temp1/60. + temp2/3600
+        elif len(coord) == 1:
+            # if an iterable of len one with float
             try:
-                t = float(coord[-1:])
-                direc = 'n'
+                return float(coord[0])
             except:
-                direc = coord[-1:]
-                coord = coord[:-1]
+                return checkconv(coord[0])
+        if temp0 < 0.:
+            total = total * -1
+    return total
 
-            if len(coord.split(':'))>0:
-                tmp = lat.split(':')
-                fin = tmp[0] + \
-                      tmp[1]/60. +\
-                      tmp[2]/3600.+\
-            return '{}{}'.format(fin,direc)
-        else:
-            try:
-                t = float(coord[-1:])
-                direc = 'n'
-            except:
-                direc = coord[-1:]
-                coord = coord[:-1]
-
-            return '{}{}'.format(coord,direc)
+def typecheck(obj): 
+    '''
+    checks type of obj and verifies it is iterable proper
+    '''
+    return not isinstance(obj, str) and isinstance(obj, Iterable)
