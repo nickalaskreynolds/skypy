@@ -21,6 +21,7 @@ Features:
 - Allows polling based on object type, seasonal/dates, or regions in the sky
 - Allows for output into numerous formats including format for Jskycal
 - Robust function allows for declaring of new file type formats and population of said formats
+- SQL databases must have a table named db with the proper amount of colum, see skypy/database/generatesql.py
 
 
 OUTLINE (NEW)
@@ -183,3 +184,5 @@ WorkFlow
 > run either
 
 ------------------------------------------------------------------------------------------------------------------------
+
+<> with <3 by Nick

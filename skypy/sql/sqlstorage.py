@@ -29,7 +29,6 @@ class sql(object):
     a.db_selsort()
     a.db_delete()
     a.closedb()
-
     '''
 
     def __init__(self,dbdir=None,dbname=None):
@@ -59,7 +58,7 @@ class sql(object):
         if isfile('{}/{}'.format(dbdir,dbname)):
             return '{}/{}'.format(dbdir,dbname)
         else:
-            return '{}/{}'.format(__path__[0],dbname)
+            return False
 
     def calldb(self):
         '''
