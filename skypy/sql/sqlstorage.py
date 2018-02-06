@@ -65,7 +65,13 @@ class sql(object):
         Connect to DB
         '''
         self.db = sqlite3.connect(self.dbdir)
-        self.sb = self.db.cursor()  
+        self.sb = self.db.cursor() 
+
+    def savedb(self):
+        '''
+        commit changes
+        '''
+        self.sb.commit() 
 
     def resetdb(self):
         '''
@@ -87,20 +93,21 @@ class sql(object):
         elif type(value) == int:
             self.sb.execute("UPDATE db set `%s` = %d where `%s` =  '%s'" % (col,value,findcol,findvalue))
 
-    def writedb(self,db,value):
+    def writedb(self,db,x):
         '''
         Write to DB
-        star uses    : name1, name2, type, ra, dec, epoch, ftype,fval, lastupdate
-        location uses: name, lat, long, tz, T/F for DST, lastupdate
+        star uses    : name1, name2, type, ra, dec, epoch, ftype,fval, visible, lastupdate (10)
+        location uses: name, lat, long, tz, T/F for DST, lastupdate                        (6)
         '''
-        values = verify_input_sql(db,value)
-        with self.db:
-            if db == 'star':
-                self.sb.executemany('INSERT INTO db VALUES (?,?,?,?,?,?,?,?,?)',values)
-            if db== 'location':
-                self.sb.executemany('INSERT INTO db VALUES (?,?,?,?,?,?)',values)
-            else:
-                return
+        # protect against sql injection
+        delimiters = ['>','|',';',' ','\\','[',']','{','}']
+        assert typecheck(x) and (((len(x) == 10) or (len(x) == 6)) and (not typecheck(x[0])))
+        for y in delimiters:
+            assert len(str(x[0]).split(y)) == 1
+        if db == 'star':
+            self.sb.execute("INSERT INTO db VALUES ('{}','{}','{}',{},{},{},'{}',{},'{}',{})".format(x[0],x[1],x[2],float(x[3]),float(x[4]),int(x[5]),x[6],float(x[7]),x[8],int(x[9])))
+        elif db == 'location':
+            self.sb.execute("INSERT INTO db VALUES('{}',{},{},{},'{}',{})".format(x[0],float(x[1]),float(x[2]),int(x[3]),x[4],int(x[5])))
 
     def db_sel(self,col1,value):
         '''
@@ -153,29 +160,6 @@ class sql(object):
         '''
         if self.db:
             self.db.close()
-
-def verify_input_sql(db,values):
-    '''
-    Verify input for the respective sql db
-    star uses    : name1, name2, type, ra, dec, epoch, ftype,fval, lastupdate
-    location uses: name, lat, long, tz, T/F for DST, lastupdate
-    '''
-    final = []
-    if (typecheck(values) and type(values) != tuple) and (len(values) == 9) or (len(values) == 6):
-        final = [tuple(x) for x in values]
-    elif typecheck(values) and type(values) == tuple:
-        final = [values,]
-    else:
-        raise RuntimeError('Cannot verify input for sql')
-
-    if db == 'star':
-        if len(final[0]) != 9:
-            raise RuntimeError('Cannot verify input for sql')
-    elif db == 'location':
-        if len(final[0]) != 6:
-            raise RuntimeError('Cannot verify input for sql')
-
-    return final
 
 def check_sql_input(current):
     '''

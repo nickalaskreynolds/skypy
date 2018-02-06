@@ -41,9 +41,9 @@ try:
     con = lite.connect('star.sql')
     cur = con.cursor()   
     cur.execute('DROP TABLE IF EXISTS db')
-    cur.execute('CREATE TABLE db(Name1 TEXT, Name2 TEXT, Type TEXT, RA FLOAT, DEC FLOAT, EPOCH INT, FluxT TEXT, FluxV FLOAT,lastupdate INT)')
+    cur.execute('CREATE TABLE db(Name1 TEXT, Name2 TEXT, Type TEXT, RA FLOAT, DEC FLOAT, EPOCH INT, FluxT TEXT, FluxV FLOAT, TimeVisible TEXT,lastupdate INT)')
     for x in stars: 
-        cur.execute("INSERT INTO db VALUES('{}','{}','{}',{},{},{},'{}',{},{})".format(x[0],x[1],x[2],float(x[3]),float(x[4]),int(x[5]),x[6],float(x[7]),int(x[8])))
+        cur.execute("INSERT INTO db VALUES('{}','{}','{}',{},{},{},'{}',{},'{}',{})".format(x[0],x[1],x[2],float(x[3]),float(x[4]),int(x[5]),x[6],float(x[7]),x[8],int(x[9])))
     con.commit()
     
 except lite.Error as e:
