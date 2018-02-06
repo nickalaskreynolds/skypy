@@ -17,7 +17,7 @@ config={
     'fields'     : ['Name','RA','Dec','Epoch'],\
     'fieldprefix': ['','','',''],\
     'fieldsuffix': ['','','',''],\
-    'customend'  : ''
+    'customend'  : '',\
     'customfield': ['','','',''],\
     'customend'  : ''
 }

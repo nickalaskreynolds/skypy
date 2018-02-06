@@ -13,6 +13,7 @@ Misc  : Resolves the location supplied to a more standard format, yields
 
 # import custom modules
 from ..version import *
+from collections import Iterable
 
 # checking python version
 assert assertion()
