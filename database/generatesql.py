@@ -14,13 +14,10 @@ except:
 try:
     con = lite.connect('star.sql')
     cur = con.cursor()   
-    cur.execute('DROP TABLE IF EXISTS Stars')
-    cur.execute('CREATE TABLE Stars(Name1 TEXT, Name2 TEXT, Type TEXT, RA TEXT, DEC TEXT, EPOCH INT, FluxT TEXT, FluxV FLOAT,lastupdate INT)')
+    cur.execute('DROP TABLE IF EXISTS db')
+    cur.execute('CREATE TABLE db(Name1 TEXT, Name2 TEXT, Type TEXT, RA TEXT, DEC TEXT, EPOCH INT, FluxT TEXT, FluxV FLOAT,lastupdate INT)')
     for x in stars: 
-        #print(len(x))
-        #print(x)
-        cur.execute("INSERT INTO Stars VALUES('{}','{}','{}','{}','{}',{},'{}',{},{})".format(x[0],x[1],x[2],x[3],x[4],int(x[5]),x[6],float(x[7]),int(x[8])))
-
+        cur.execute("INSERT INTO db VALUES('{}','{}','{}','{}','{}',{},'{}',{},{})".format(x[0],x[1],x[2],x[3],x[4],int(x[5]),x[6],float(x[7]),int(x[8])))
     con.commit()
     
 except lite.Error as e:
@@ -40,7 +37,7 @@ con = lite.connect('star.sql')
 cur = con.cursor()   
 with con:    
     cur = con.cursor()    
-    cur.execute("SELECT * FROM Stars")
+    cur.execute("SELECT * FROM db")
 
     rows = cur.fetchall()
 
@@ -57,13 +54,13 @@ except:
 try:
     con = lite.connect('location.sql')
     cur = con.cursor()   
-    cur.execute('DROP TABLE IF EXISTS Locations')
+    cur.execute('DROP TABLE IF EXISTS db')
 # Name             LAT(N)      LONG(W)    UTC DST(Y/N) LastUpdated
-    cur.execute('CREATE TABLE Locations(Name1 TEXT, Lat TEXT, Long TEXT, UTC INT, DST TEXT,lastupdate INT)')
+    cur.execute('CREATE TABLE db(Name1 TEXT, Lat TEXT, Long TEXT, UTC INT, DST TEXT,lastupdate INT)')
     for x in locations: 
         #print(len(x))
         #print(x)
-        cur.execute("INSERT INTO Locations VALUES('{}','{}','{}',{},'{}',{})".format(x[0],x[1],x[2],int(x[3]),x[4],int(x[5])))
+        cur.execute("INSERT INTO db VALUES('{}','{}','{}',{},'{}',{})".format(x[0],x[1],x[2],int(x[3]),x[4],int(x[5])))
 
     con.commit()
     
@@ -84,7 +81,7 @@ con = lite.connect('location.sql')
 cur = con.cursor()   
 with con:    
     cur = con.cursor()    
-    cur.execute("SELECT * FROM Locations")
+    cur.execute("SELECT * FROM db")
 
     rows = cur.fetchall()
 
