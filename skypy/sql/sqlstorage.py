@@ -28,7 +28,7 @@ class sql(object):
         '''
         self.time  = '{}'.format(str(ctime()).split('.')[0])
         self.db    = None
-        self.dbdir = self.resolvedir(dbdir,dbname)
+        self.dbdir = self.resolve_dir(dbdir,dbname)
 
     def get_functions(self):
         '''
@@ -56,66 +56,67 @@ class sql(object):
         Connect to DB
         '''
         self.db = sqlite3.connect(self.dbdir)
+        self.sb = self.db.cursor()   
 
     def writedb(self,db,value):
         '''
         Write to DB
-        star uses    : name1, name2, type, ra, dec, epoch, ubv, lastupdate
+        star uses    : name1, name2, type, ra, dec, epoch, ftype,fval, lastupdate
         location uses: name, lat, long, tz, T/F for DST, lastupdate
         '''
-        self.sb.cursor()
         value = verify_input_sql(db,value)
         if cmd == 'star':
-            self.db.executemany('INSERT INTO db VALUES (?,?,?,?,?,?,?,?,?,?)',values)
-            self.db.commit()
+            self.sb.executemany('INSERT INTO db VALUES (?,?,?,?,?,?,?,?,?,?)',values)
+            self.sb.commit()
         if cmd == 'location':
-            self.db.executemany('INSERT INTO db VALUES (?,?,?,?,?,?)',values)
-            self.db.commit()
+            self.sb.executemany('INSERT INTO db VALUES (?,?,?,?,?,?)',values)
+            self.sb.commit()
         else:
             return
 
-    def db_single(self,col1,value):
+    def db_sel(self,col1,value):
         '''
         Search an open DB, single value select
         '''
-        self.sb.cursor()
-        self.db.execute('SELECT * FROM db WHERE %s like %s', (col1,value))
-        return self.db.fetchall()
+        self.sb.execute("SELECT * FROM db WHERE `%s` like '%s'" % (col1,value))
+        return self.sb.fetchall()
 
-    def db_ssort(self,col1,top):
+    def db_ssort(self,col1,top,order='asc'):
         '''
         Search an open DB, single column sort, pulling top values
         '''
-        self.sb.cursor()
-        self.db.execute('SELECT * FROM db order by %s ASC, limit %s', (col1,top))
-        return self.db.fetchall()
+        #                                                   col1 order   top
+        cursor = self.sb.execute("SELECT * FROM db ORDER BY `%s` %s LIMIT %d" % (col1,order.upper(),int(top)))
 
-    def db_dsort(self,col1,col2,top):
+        return [x for x in cursor]
+
+    def db_dsort(self,col1,col2,top,order=['asc','asc']):
         '''
         Search an open DB, double column sort, pulling top values
         '''
-        self.sb.cursor()
-        self.db.execute('SELECT * FROM db order by %s ASC, %s ASC limit %s', (col1,col2,top))
-        return self.db.fetchall()
+        #                                                  col1 ordercol2  order   top
+        cursor = self.sb.execute("SELECT * FROM db ORDER BY `%s` %s ,`%s` %s LIMIT %d" % (col1,order[0].upper(),col2,order[1].upper(),int(top)))
+        return [x for x in cursor]
 
-    def db_tsort(self,col1,col2,col3,top):
+    def db_selsort(self,col1,value,col2,top,order='asc'):
         '''
-        Search an open DB,triple column sort, pulling top values
+        Search an open DB,Select from column, order by another, limit results
         '''
-        self.sb.cursor()
-        self.db.execute('SELECT * FROM db order by %s ASC, %s ASC, %s ASC limit %s', (col1,col2,col3,top))
-        return self.db.fetchall()
+        #                                                 col1    value        col2 order      top
+        cursor = self.sb.execute("SELECT * FROM db WHERE `%s` like '%s' ORDER BY `%s` %s LIMIT %d" % (col1,value,col2,order.upper(),int(top)))
+        return [x for x in cursor]
 
     def closedb(self):
         '''
         Close DB
         '''
-        self.db.close()
+        if self.db:
+            self.db.close()
 
 def verify_input_sql(db,values):
     '''
     Verify input for the respective sql db
-    star uses    : name1, name2, type, ra, dec, epoch, ubv, lastupdate
+    star uses    : name1, name2, type, ra, dec, epoch, ftype,fval, lastupdate
     location uses: name, lat, long, tz, T/F for DST, lastupdate
     '''
     final = []
@@ -127,7 +128,7 @@ def verify_input_sql(db,values):
         raise RuntimeError('Cannot verify input for sql')
 
     if db == 'star':
-        if len(final[0]) != 10:
+        if len(final[0]) != 9:
             raise RuntimeError('Cannot verify input for sql')
     elif db == 'location':
         if len(final[0]) != 6:
