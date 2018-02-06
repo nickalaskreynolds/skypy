@@ -78,7 +78,9 @@ class sql(object):
         Update a db column (col) to value (value) where you match in findcol to findvalue
         By nature of programming, findvalue must be a string
         '''
+        assert check_sql_input(col) and check_sql_input(findcol) and check_sql_input(findvalue)
         if type(value) == str:
+            assert check_sql_input(value)
             self.sb.execute("UPDATE db set `%s` = '%s' where `%s` =  '%s'" % (col,value,findcol,findvalue))
         elif type(value) == float:
             self.sb.execute("UPDATE db set `%s` = %f where `%s` =  '%s'" % (col,value,findcol,findvalue))
@@ -104,6 +106,7 @@ class sql(object):
         '''
         Search an open DB, single value select
         '''
+        assert check_sql_input(col1) and check_sql_input(value)
         self.sb.execute("SELECT * FROM db WHERE `%s` like '%s'" % (col1,value))
         return self.sb.fetchall()
 
@@ -111,6 +114,7 @@ class sql(object):
         '''
         Search an open DB, single column sort, pulling top values
         '''
+        assert check_sql_input(col1) and check_sql_input(order)
         #                                                   col1 order   top
         cursor = self.sb.execute("SELECT * FROM db ORDER BY `%s` %s LIMIT %d" % (col1,order.upper(),int(top)))
 
@@ -120,6 +124,7 @@ class sql(object):
         '''
         Search an open DB, double column sort, pulling top values
         '''
+        assert check_sql_input(col1) and check_sql_input(col2) and check_sql_input(order[0]) and check_sql_input(order[1])
         #                                                  col1 ordercol2  order   top
         cursor = self.sb.execute("SELECT * FROM db ORDER BY `%s` %s ,`%s` %s LIMIT %d" % (col1,order[0].upper(),col2,order[1].upper(),int(top)))
         return [x for x in cursor]
@@ -128,6 +133,7 @@ class sql(object):
         '''
         Search an open DB,Select from column, order by another, limit results
         '''
+        assert check_sql_input(col1) and check_sql_input(value) and check_sql_input(col2) and check_sql_input(order)
         #                                                 col1    value        col2 order      top
         cursor = self.sb.execute("SELECT * FROM db WHERE `%s` like '%s' ORDER BY `%s` %s LIMIT %d" % (col1,value,col2,order.upper(),int(top)))
         return [x for x in cursor]
@@ -136,6 +142,7 @@ class sql(object):
         '''
         Delete from Database
         '''
+        assert check_sql_input(col) and check_sql_input(name)
         assert col in ['Name1','Name2','Name']
         self.sb.execute("DELETE from db where `%s` = '%s'" % (col,name))
         print('Total rows deleted: {}'.format(self.db.total_changes))
@@ -169,6 +176,12 @@ def verify_input_sql(db,values):
             raise RuntimeError('Cannot verify input for sql')
 
     return final
+
+def check_sql_input(current):
+    '''
+    Protect against injection
+    '''
+    return len(current.split(' ')) == 1
 
 def typecheck(obj): 
     from collections import Iterable
