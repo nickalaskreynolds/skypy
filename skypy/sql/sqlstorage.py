@@ -64,15 +64,14 @@ class sql(object):
         star uses    : name1, name2, type, ra, dec, epoch, ftype,fval, lastupdate
         location uses: name, lat, long, tz, T/F for DST, lastupdate
         '''
-        value = verify_input_sql(db,value)
-        if cmd == 'star':
-            self.sb.executemany('INSERT INTO db VALUES (?,?,?,?,?,?,?,?,?,?)',values)
-            self.sb.commit()
-        if cmd == 'location':
-            self.sb.executemany('INSERT INTO db VALUES (?,?,?,?,?,?)',values)
-            self.sb.commit()
-        else:
-            return
+        values = verify_input_sql(db,value)
+        with self.db:
+            if db == 'star':
+                self.sb.executemany('INSERT INTO db VALUES (?,?,?,?,?,?,?,?,?)',values)
+            if db== 'location':
+                self.sb.executemany('INSERT INTO db VALUES (?,?,?,?,?,?)',values)
+            else:
+                return
 
     def db_sel(self,col1,value):
         '''
@@ -106,6 +105,14 @@ class sql(object):
         cursor = self.sb.execute("SELECT * FROM db WHERE `%s` like '%s' ORDER BY `%s` %s LIMIT %d" % (col1,value,col2,order.upper(),int(top)))
         return [x for x in cursor]
 
+    def db_delete(self,col,name):
+        '''
+        Delete from Database
+        '''
+        assert col in ['Name1','Name2','Name']
+        self.sb.execute("DELETE from db where `%s` = '%s'" % (col,name))
+        print('Total rows deleted: {}'.format(self.db.total_changes))
+
     def closedb(self):
         '''
         Close DB
@@ -120,7 +127,7 @@ def verify_input_sql(db,values):
     location uses: name, lat, long, tz, T/F for DST, lastupdate
     '''
     final = []
-    if typecheck(values) and type(values) != tuple:
+    if (typecheck(values) and type(values) != tuple) and (len(values) == 9) or (len(values) == 6):
         final = [tuple(x) for x in values]
     elif typecheck(values) and type(values) == tuple:
         final = [values,]
@@ -137,7 +144,8 @@ def verify_input_sql(db,values):
     return final
 
 def typecheck(obj): 
+    from collections import Iterable
     '''
     Checks if object is iterable and not string
     '''
-    return not isinstance(obj, str) and isinstance(obj, iterable)
+    return not isinstance(obj, str) and isinstance(obj, Iterable)
