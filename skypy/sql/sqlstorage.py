@@ -21,6 +21,16 @@ assert assertion()
 __version__ = package_version()
 
 class sql(object):
+    '''
+    To call:
+    a= sql.(dir,file)
+    a.calldb()
+    a.writedb()
+    a.db_selsort()
+    a.db_delete()
+    a.closedb()
+
+    '''
 
     def __init__(self,dbdir=None,dbname=None):
         '''
@@ -56,7 +66,25 @@ class sql(object):
         Connect to DB
         '''
         self.db = sqlite3.connect(self.dbdir)
-        self.sb = self.db.cursor()   
+        self.sb = self.db.cursor()  
+
+    def resetdb(self):
+        '''
+        reset the db
+        '''
+        self.db.rollback()
+
+    def updatedb(self,findcol,findvalue,col,value):
+        '''
+        Update a db column (col) to value (value) where you match in findcol to findvalue
+        By nature of programming, findvalue must be a string
+        '''
+        if type(value) == str:
+            self.sb.execute("UPDATE db set `%s` = '%s' where `%s` =  '%s'" % (col,value,findcol,findvalue))
+        elif type(value) == float:
+            self.sb.execute("UPDATE db set `%s` = %f where `%s` =  '%s'" % (col,value,findcol,findvalue))
+        elif type(value) == int:
+            self.sb.execute("UPDATE db set `%s` = %d where `%s` =  '%s'" % (col,value,findcol,findvalue))
 
     def writedb(self,db,value):
         '''
