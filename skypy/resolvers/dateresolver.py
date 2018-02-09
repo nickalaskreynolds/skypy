@@ -62,8 +62,12 @@ class date(object):
                  '5':['09-01','10-31','Fall' ],\
                  '6':['11-01','12-31','Early-Winter'],\
                  }
-
-        month = int(str(self.original)[4:6])
+        if self.location == 'n':
+            month = int(str(self.original)[4:6])
+        else:
+            month = (int(str(self.original)[4:6]) + 6)
+            if month > 12:
+                month = month - 12
         seasonkey = str(month//2 + month%2)
         return seasons[seasonkey][2]
 
