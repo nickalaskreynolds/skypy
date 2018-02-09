@@ -10,9 +10,13 @@ Misc  : Will handle the databases using sqlite
 from os.path import isfile
 
 # import nonstandard modules
-from astropy import coordinates
-import astropy.units as u
-
+try:
+    from astroquery import simbad
+    from astropy import coordinates
+    import astropy.units as u
+    withastropy = True
+except:
+    withastropy = False
 # import custom modules
 from ..misc.colours import colours
 from ..version import *
