@@ -17,6 +17,7 @@ config={
     'fields'     : ['Name','RA','Dec','Magnitude'],\
     'fieldprefix': ['','','','Magntitude='],\
     'fieldsuffix': ['','','',''],\
+    'customend'  : '',\
     'customfield': ["Telescope Home",98,30,"CSys=Mount; RotType=Mount; RotAng=0"],\
     'customend'  : ''
 }

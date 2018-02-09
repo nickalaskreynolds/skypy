@@ -64,7 +64,7 @@ class configuration(object):
         read the input file
         """
         temp = vars(import_module(self.inputfile))
-        mainlibs=['time','numpy','scipy','version','datetime','os']
+        mainlibs=['time','numpy','scipy','version','datetime','os','sys']
         b = {}
         for i in temp:
             if (i.split('.')[0] not in mainlibs) and ('__' not in i):
