@@ -33,12 +33,15 @@ def initconfig(ifile=None):
     initialize the config file
     '''
     if os.path.isfile(ifile):
-        temp  = config(ifile)['config']
+        temp  = config(ifile)
+        temp.read()
+        temp = temp.get_params()['config']
     elif (ifile in dir_strip(all_templates())):
         temp1 = all_templates()
         temp2 = temp1[dir_strip(temp1).index(ifile.strip('.py'))]
-        print(temp2)
-        temp  = config(temp1)['config']
+        temp  = config(temp2)
+        temp.read()
+        temp = temp.get_params()['config']
     else:
         temp = None
     return temp

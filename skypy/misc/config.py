@@ -41,7 +41,6 @@ class configuration(object):
             self.cwd = cwd
 
         self.params = None
-
         if inputfile == None:
             raise RuntimeError('Configuration file not specified, refer to example...')
         else:
@@ -124,20 +123,16 @@ class configuration(object):
         """
         Remove File extensions
         """
-        return '.'.join(inputfile.split('.')[:-1])
+        return inputfile.strip('.py')
 
     def find_file(self,inputfile):
         '''
         Find the input file and make sure it is in current directory
         '''
         if isfile(inputfile):
-            if (len(inputfile.split('/')) > 1) or ('.py' not in inputfile):
-                dest = "{}/config_{}.py".format(self.cwd,self.time)
-                copyfile(inputfile,dest)
-                self.remove = True
-            else:
-                self.remove = False
-                dest = inputfile
+            dest = "{}/config_{}.py".format(self.cwd,self.time)
+            copyfile(inputfile,dest)
+            self.remove = True
         else:
             raise RuntimeError('Input file not found: {}'.format(inputfile))
         return dest.split('/')[-1]
