@@ -41,7 +41,7 @@ try:
     con = lite.connect('star.sql')
     cur = con.cursor()   
     cur.execute('DROP TABLE IF EXISTS db')
-    cur.execute('CREATE TABLE db(Name1 TEXT, Name2 TEXT, Type TEXT, RA FLOAT, DEC FLOAT, EPOCH INT, FluxT TEXT, FluxV FLOAT, TimeVisible TEXT,lastupdate INT)')
+    cur.execute('CREATE TABLE db(NAME1 TEXT, NAME2 TEXT, TYPE TEXT, RA FLOAT, DEC FLOAT, EPOCH INT, FLUXT TEXT, FLUXV FLOAT, TIMEVISIBLE TEXT,LASTUPDATED INT)')
     for x in stars: 
         cur.execute("INSERT INTO db VALUES('{}','{}','{}',{},{},{},'{}',{},'{}',{})".format(x[0],x[1],x[2],float(x[3]),float(x[4]),int(x[5]),x[6],float(x[7]),x[8],int(x[9])))
     con.commit()
@@ -99,7 +99,7 @@ try:
     cur = con.cursor()   
     cur.execute('DROP TABLE IF EXISTS db')
 # Name             LAT(N)      LONG(W)    UTC DST(Y/N) LastUpdated
-    cur.execute('CREATE TABLE db(Name1 TEXT, Lat FLOAT, Long FLOAT, UTC INT, DST TEXT,lastupdate INT)')
+    cur.execute('CREATE TABLE db(NAME1 TEXT, LAT FLOAT, LONG FLOAT, UTC INT, DST TEXT,LASTUPDATE INT)')
     for x in locations: 
         #print(len(x))
         #print(x)

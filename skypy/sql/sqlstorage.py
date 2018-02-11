@@ -55,8 +55,11 @@ class sql(object):
         '''
         resolve the directory name of the db
         '''
+        from os.path import expanduser
         if isfile('{}/{}'.format(dbdir,dbname)):
             return '{}/{}'.format(dbdir,dbname)
+        elif isfile('{}/.cache/skypy/database/{}'.format(expanduser("~"),dbname)):
+            return '{}/.cache/skypy/database/{}'.format(expanduser("~"),dbname)
         else:
             return False
 
@@ -168,7 +171,6 @@ def check_sql_input(current):
     return len(current.split(' ')) == 1
 
 def typecheck(obj): 
-    from collections import Iterable
     '''
     Checks if object is iterable and not string
     '''

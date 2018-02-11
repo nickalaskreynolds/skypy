@@ -8,8 +8,7 @@ Misc  : Config File for template output
 
 config={
     'pprint' : True,\
-    'newline': True,\
-    'headerbreak'  : '#',\
+    'commentline'  : '#',\
     'includefields': True,\
     'header'       : '',\
     'interfielddelimiter': ' ',\
