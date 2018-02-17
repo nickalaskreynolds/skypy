@@ -78,6 +78,13 @@ class configuration(object):
         """
         return self.params
 
+    def get_dir(self):
+        """
+        Return the directory where file was pulled
+        """
+        return self.directory
+
+
     def set_params(self,**kwargs):
         """
         Set the parameters in the object
@@ -131,6 +138,9 @@ class configuration(object):
         '''
         if isfile(inputfile):
             dest = "{}/config_{}.py".format(self.cwd,self.time)
+            self.directory = '/'.join(inputfile.split('/')[:-1])
+            if self.directory == '':
+                self.directory = self.cwd
             copyfile(inputfile,dest)
             self.remove = True
         else:

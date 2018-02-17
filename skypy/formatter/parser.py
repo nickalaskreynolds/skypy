@@ -35,16 +35,19 @@ def initconfig(ifile=None):
     if os.path.isfile(ifile):
         temp  = config(ifile)
         temp.read()
-        temp = temp.get_params()['config']
+        tempf = temp.get_params()['config']
+        tempd = temp.get_dir()
     elif (ifile in dir_strip(all_templates())):
         temp1 = all_templates()
         temp2 = temp1[dir_strip(temp1).index(ifile.strip('.py'))]
         temp  = config(temp2)
         temp.read()
-        temp = temp.get_params()['config']
+        tempd = temp.get_dir()
+        tempf = temp.get_params()['config']
     else:
-        temp = None
-    return temp
+        tempf  = None
+        tempd = None
+    return tempd,tempf
 
 def dir_strip(temp):
     if typecheck(temp):
