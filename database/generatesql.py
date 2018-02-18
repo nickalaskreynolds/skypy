@@ -99,11 +99,11 @@ try:
     cur = con.cursor()   
     cur.execute('DROP TABLE IF EXISTS db')
 # Name             LAT(N)      LONG(W)    UTC DST(Y/N) LastUpdated
-    cur.execute('CREATE TABLE db(NAME1 TEXT, LAT FLOAT, LONG FLOAT, UTC INT, DST TEXT,LASTUPDATE INT)')
+    cur.execute('CREATE TABLE db(NAME1 TEXT, LAT FLOAT, LONG FLOAT, UTC INT,HEIGHT FLOAT,LASTUPDATE INT)')
     for x in locations: 
         #print(len(x))
         #print(x)
-        cur.execute("INSERT INTO db VALUES('{}',{},{},{},'{}',{})".format(x[0],float(x[1]),float(x[2]),int(x[3]),x[4],int(x[5])))
+        cur.execute("INSERT INTO db VALUES('{}',{},{},{},{},{})".format(x[0],float(x[1]),float(x[2]),int(x[3]),float(x[4]),int(x[5])))
 
     con.commit()
     

@@ -1,5 +1,8 @@
 # TIMESITE SQL Plaintext Database
-# Name             LAT(N)      LONG(W)    UTC DST(Y/N) LastUpdated
+# Name             LAT(N)      LONG(W)    UTC  HEIGHT  LastUpdated
 
-Norman,OK,USA   35:13:21.25 +97:26:22.11   -6    y      20180201
-APO,NM,USA      32:46:49     105:49:13     -7    y      20180201
+Norman,OK,USA   35:13:21.25 +97:26:22.11   -6   700     20180201
+APO,NM,USA      32:46:49    +105:49:13     -7   2800    20180201
+IRAM30m,Spain   37:04:06.29 +03:23:55.51   +1   2850    20180201
+Subaru,HI,USA   19:49:32    +155:28:36     -8   4139    20180201
+ALMA,Chile     -23:01:09    +67:45:12      -7   5050    20180201
