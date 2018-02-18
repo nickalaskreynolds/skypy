@@ -110,7 +110,7 @@ class sql(object):
         if db == 'star':
             self.sb.execute("INSERT INTO db VALUES ('{}','{}','{}',{},{},{},'{}',{},'{}',{})".format(x[0],x[1],x[2],float(x[3]),float(x[4]),int(x[5]),x[6],float(x[7]),x[8],int(x[9])))
         elif db == 'location':
-            self.sb.execute("INSERT INTO db VALUES('{}',{},{},{},'{}',{})".format(x[0],float(x[1]),float(x[2]),int(x[3]),x[4],int(x[5])))
+            self.sb.execute("INSERT INTO db VALUES('{}',{},{},{},{},{})".format(x[0],float(x[1]),float(x[2]),int(x[3]),float(x[4]),int(x[5])))
 
     def db_sel(self,col1,value):
         '''
