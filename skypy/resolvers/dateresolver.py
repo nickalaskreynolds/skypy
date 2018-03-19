@@ -313,14 +313,16 @@ def lst(jd,longit):
 
     MJD_0 = 2400000.5
     MJD_JD2000 = 51544.5
-    h    = jd - jd0             # get hours since prev jd midnight
+    h    = (jd - jd0) * 24      # get hours since prev jd midnight
     mjd  = MJD_JD2000 + MJD_0   # mean julian day conv
     d,d0 = jd - mjd,jd0 - mjd   # num of days since j2000
     t    = d / 36525            # number of centuries since year 2000
-    G = 6.697374558 #constant for year
+    G = 6.697374558             # constant for year
     GMST = G + 0.06570982441908 * d0 +\
            1.00273790935 * h + 0.000026 * t**2 # greenwish mean sidereal time
-    print(GMST)       
+    # GMST1 = 18.697374558 + 24.06570982441908 * d # less accurate
+    print(GMST)
+    GMST = GMST 
     GMST = GMST % 24       
     ep   = 23.4393 - 0.0000004 * d # obliquity
     loso = 280.47 + 0.98565 * d    # mean long of sun
@@ -334,8 +336,8 @@ def lst(jd,longit):
     longit = longit / 15.
 
     # west justified
-    print('d0:{},h:{},t:{},gmst:{},eq:{},gast:{},long:{}'\
-          .format(d0,h,t,GMST,eqeq,GAST,longit))
+    print('d:{},d0:{},h:{},t:{},gmst:{},eq:{},gast:{},long:{}'\
+          .format(d,d0,h,t,GMST,eqeq,GAST,longit))
     lst = GAST - longit
     lst0 = int(lst)
     delt = (lst - lst0) * 60.
