@@ -10,11 +10,11 @@ Misc  : Will handle the databases using sqlite
 from os.path import isfile
 from time import time as ctime
 import sqlite3
-from collections import Iterable
 
 # import custom modules
 from ..misc.colours import colours
 from ..version import *
+from ..misc.functions import *
 
 # checking python version
 assert assertion()
@@ -169,9 +169,3 @@ def check_sql_input(current):
     Protect against injection
     '''
     return len(current.split(' ')) == 1
-
-def typecheck(obj): 
-    '''
-    Checks if object is iterable and not string
-    '''
-    return not isinstance(obj, str) and isinstance(obj, Iterable)

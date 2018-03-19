@@ -18,3 +18,12 @@ __version__ = package_version()
 
 # input time and location object
 
+
+class body(object):
+    # assuming ra and dec in 
+    def __init__(self):
+        self.ra   = ra
+        self.dec  = dec
+        self.loc  = location
+        self.time = time
+

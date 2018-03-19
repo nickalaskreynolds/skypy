@@ -9,7 +9,6 @@ Misc  : Parses config files
 from glob import glob
 from os.path import expanduser
 import os 
-from collections import Iterable
 dir_path = os.path.dirname(os.path.realpath(__file__))
 home = '{}/.cache/skypy/templates'.format(expanduser("~"))
 
@@ -17,16 +16,11 @@ home = '{}/.cache/skypy/templates'.format(expanduser("~"))
 from ..misc.colours import colours
 from ..version import *
 from ..misc.config import configuration as config
+from ..misc.functions import *
 
 # checking python version
 assert assertion()
 __version__ = package_version()
-
-def typecheck(obj): 
-    '''
-    Checks if object is iterable and not string
-    '''
-    return not isinstance(obj, str) and isinstance(obj, Iterable)
 
 def initconfig(ifile=None):
     '''

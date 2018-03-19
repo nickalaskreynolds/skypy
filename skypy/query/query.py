@@ -19,6 +19,7 @@ except:
     withastropy = False
 # import custom modules
 from ..misc.colours import colours
+from ..misc.functions import *
 from ..version import *
 
 # checking python version
